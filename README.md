@@ -3,6 +3,8 @@ This is a terminal file manager in the style of Ranger, nnn, lf, vifm, etc. It u
 to display directory contents, preview the contents of the selected directory or file before entering
 or opening, and preview images (poorly). 
 
+![](fzfm.png)
+
 ###  Does well
 - traverse file tree 
 - preview files and directories 
