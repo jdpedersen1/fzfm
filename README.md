@@ -15,7 +15,7 @@ or opening, and preview images (poorly).
 - fzf
 - chafa (for now, working to get ueberzug or ueberzugpp working)
 
-(for extra functionality, or edit script to use programs of your choice)
+### Dependencies (for extra functionality, or edit script to use programs of your choice)
 - dialog/whiptail/zenity (your choice, for creation of files/dirs if you don't want to use plain bash)
 - libreoffice
 - zathura
