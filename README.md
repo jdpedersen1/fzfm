@@ -11,8 +11,7 @@ or opening, and preview images (poorly).
 - chmod +x all scripts in fzfm dir
 - Add to path if not already in a dir that is in your path (only necessary if you don't want to have to type entire path to script when running)
 
-### Dependencies
-(for the script to work)
+### Dependencies (for the script to work)
 - fzf
 - chafa (for now, working to get ueberzug or ueberzugpp working)
 
