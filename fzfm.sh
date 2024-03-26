@@ -36,7 +36,7 @@ fzfm () {
                         file_type=$(file -b --mime-type "${selection}" | cut -d'/' -f1)
                         case $file_type in
                             "text")
-                                vim "${selection}"
+                                nvim -u $HOME/.config/nvim/init.lua "${selection}"
                                 ;;
                             "image")
                                 for fType in ${selection}
