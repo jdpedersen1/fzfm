@@ -21,7 +21,7 @@ or opening, and preview images (poorly).
 - zathura (for opening PDFs)
 - mpv (for video)
 - sxiv (for images)
-- neovim/vim (for txt files)
+- neovim/vim (for editing text files)
 - gimp (for xcf files)
 
 ###  Does well
