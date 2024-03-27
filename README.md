@@ -17,11 +17,12 @@ or opening, and preview images (poorly).
 
 ### Dependencies (for extra functionality, or edit script to use programs of your choice)
 - dialog/whiptail/zenity (your choice, for creation of files/dirs if you don't want to use plain bash)
-- libreoffice
-- zathura
-- mpv
-- sxiv
-- neovim/vim
+- libreoffice (for opening word docs)
+- zathura (for opening PDFs)
+- mpv (for video)
+- sxiv (for images)
+- neovim/vim (for txt files)
+- gimp (for xcf files)
 
 ###  Does well
 - traverse file tree 
