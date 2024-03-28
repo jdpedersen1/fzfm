@@ -8,9 +8,9 @@ fzfm () {
             --bind "right:accept" \
             --bind "shift-up:preview-up" \
             --bind "shift-down:preview-down" \
-            --bind "ctrl-d:execute(bash -e ~/.local/fzfm/create_dir.sh)" \
+            --bind "ctrl-d:execute(bash -e ~/.local/fzfm/create_dir.sh)+accept" \
             --bind "ctrl-f:execute(bash -e ~/.local/fzfm/create_file.sh)" \
-            --bind "ctrl-t:execute(bash -e ~/.local/fzfm/delete_selected.sh {})" \
+            --bind "ctrl-t:execute(~/.local/fzfm/delete_selected.sh {} && exec $0)" \
             --bind "space:toggle" \
             --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#121212,bg+:#262626 \
             --color=hl:#5f87af,hl+:#487caf,info:#afaf87,marker:#274a37 \
@@ -33,43 +33,47 @@ fzfm () {
                     else
                         chafa -c full --color-space rgb --dither none -p on -w 9 2>/dev/null {}
                         fi')"
-                        file_type=$(file -b --mime-type "${selection}" | cut -d'/' -f1)
-                        case $file_type in
-                            "text")
-                                nvim -u $HOME/.config/nvim/init.lua "${selection}"
-                                ;;
-                            "image")
-                                for fType in ${selection}
-                                do
-                                    if [[ "${fType}" == *.xcf ]]; then
-                                        gimp 2>/dev/null "${selection}"
-                                    else
-                                        sxiv "${selection}"
-                                    fi
-                                done
-                                ;;
-                            "video")
-                                mpv -fs "${selection}" > /dev/null
-                                ;;
-                            "inode")
-                                cd "${selection}" > /dev/null
-                                ;;
-                            "application")
-                                for fType in ${selection}
-                                do
-                                    if [[ "${fType}" == *.docx ]] || [[ "${fType}" == *.odt ]]; then
-                                        libreoffice "${selection}" > /dev/null
-                                    elif [[ "${fType}" == *.pdf ]]; then
-                                        zathura 2>/dev/null "${selection}"
-                                    fi
-                                done
-                                ;;
-                            *)
-                                break
-                                ;;
-                        esac        done
-                    }
+                        if [[ -d ${selection} ]]; then
+                            >/dev/null cd "${selection}"
+                        elif [[ -f "${selection}" ]]; then
+                            file_type=$(file -b --mime-type "${selection}" | cut -d'/' -f1)
+                            case $file_type in
+                                "text")
+                                    nvim -u $HOME/.config/nvim/init.lua "${selection}"
+                                    ;;
+                                "image")
+                                    for fType in ${selection}
+                                    do 
+                                        if [[ "${fType}" == *.xcf ]]; then
+                                            gimp 2>/dev/null "${selection}"
+                                        else
+                                            sxiv "${selection}"
+                                        fi
+                                    done
+                                    ;;
+                                "video")
+                                    mpv -fs "${selection}" > /dev/null
+                                    ;;
+                                "application")
+                                    for fType in ${selection}
+                                    do
+                                        if [[ "${fType}" == *.docx ]] || [[ "${fType}" == *.odt ]]; then
+                                            libreoffice "${selection}" > /dev/null
+                                        elif [[ "${fType}" == *.pdf ]]; then
+                                            zathura 2>/dev/null "${selection}"
+                                        fi
+                                    done
+                                    ;;
 
-                    clear
-                    fzfm
+                                "inode")
+                                    nvim -u $HOME/.config/nvim/init.lua "${selection}"
+                                    ;;
+                            esac
+                        else
+                            break
+                        fi
+                    done
+                }
+                clear
+                fzfm
 

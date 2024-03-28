@@ -28,14 +28,16 @@ or opening, and preview images (poorly).
 - traverse file tree 
 - preview files and directories 
 - open files using different software based on file type
-- create new files and directories
 
 ### Does (needs work)
 - image preview
 - delete files/directories
+- create new files and directories (creates then fine, just has unexpected behavior after creating, have to close script and relaunch)
 
 ### Does not...yet (TODO)
 - copy files/directories
 - move directories
 - extract/compress
 
+### Known "bugs"
+unexpecte behavior after creating a file or dir
