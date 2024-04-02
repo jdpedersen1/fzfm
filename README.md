@@ -16,7 +16,6 @@ or opening, and preview images (poorly).
 - chafa (for now, working to get ueberzug or ueberzugpp working)
 
 ### Dependencies (for extra functionality, or edit script to use programs of your choice)
-- dialog/whiptail/zenity (your choice, for creation of files/dirs if you don't want to use plain bash)
 - libreoffice (for opening word docs)
 - zathura (for opening PDFs)
 - mpv (for video)
@@ -28,15 +27,13 @@ or opening, and preview images (poorly).
 - traverse file tree 
 - preview files and directories 
 - open files using different software based on file type
+- create new files and directories (creates then fine, just has unexpected behavior after creating, have to close script and relaunch)
+- delete files/directories
 
 ### Does (needs work)
 - image preview
-- delete files/directories
-- create new files and directories (creates then fine, just has unexpected behavior after creating, have to close script and relaunch)
 
 ### Does not...yet (TODO)
-- copy files/directories
-- move directories
 - extract/compress
 
 ### Known "bugs"
