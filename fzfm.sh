@@ -8,9 +8,11 @@ fzfm () {
             --bind "right:accept" \
             --bind "shift-up:preview-up" \
             --bind "shift-down:preview-down" \
-            --bind "ctrl-d:execute(bash -e ~/.local/fzfm/create_dir.sh)+accept" \
-            --bind "ctrl-f:execute(bash -e ~/.local/fzfm/create_file.sh)" \
-            --bind "ctrl-t:execute(~/.local/fzfm/delete_selected.sh {} && exec $0)" \
+            --bind "ctrl-d:execute(bash -e ~/.local/fzfm/create_dir.sh)+reload(lsd -a -1)" \
+            --bind "ctrl-f:execute(bash -e ~/.local/fzfm/create_file.sh)+reload(lsd -a -1)" \
+            --bind "ctrl-t:execute(trash {})+reload(lsd -a -1)" \
+            --bind "ctrl-c:execute([ -d /tmp/copied ] || mkdir /tmp/copied && cp -r {} /tmp/copied/)" \
+            --bind "ctrl-g:execute(mv /tmp/copied/* .)+reload(lsd -a -1)" \
             --bind "space:toggle" \
             --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#121212,bg+:#262626 \
             --color=hl:#5f87af,hl+:#487caf,info:#afaf87,marker:#274a37 \

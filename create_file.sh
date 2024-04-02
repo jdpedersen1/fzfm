@@ -21,6 +21,5 @@ read -rp "Enter file names separated by spaces: " filenames
 for filename in $filenames; do
     # Create the file
     touch "$filename"
-    echo "File '$filename' created."
 done
 
