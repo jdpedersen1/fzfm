@@ -14,7 +14,7 @@ fzfm () {
             --bind "ctrl-c:execute([ -d /tmp/copied ] || mkdir /tmp/copied && cp -r {} /tmp/copied/)" \
             --bind "ctrl-g:execute(mv /tmp/copied/* .)+reload(lsd -a -1)" \
             --bind "space:toggle" \
-            --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#121212,bg+:#262626 \
+            --color=fg:#d0d0d0,fg+:#d0d0d0,bg+:#262626 \
             --color=hl:#5f87af,hl+:#487caf,info:#afaf87,marker:#274a37 \
             --color=pointer:#a62b2b,spinner:#af5fff,prompt:#876253,header:#87afaf \
             --height 95% \

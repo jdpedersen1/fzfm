@@ -27,7 +27,7 @@ or opening, and preview images (poorly).
 - traverse file tree 
 - preview files and directories 
 - open files using different software based on file type
-- create new files and directories (creates then fine, just has unexpected behavior after creating, have to close script and relaunch)
+- create new files and directories
 - delete files/directories
 
 ### Does (needs work)
@@ -35,6 +35,7 @@ or opening, and preview images (poorly).
 
 ### Does not...yet (TODO)
 - extract/compress
+- rename
 
 ### Known "bugs"
 unexpecte behavior after creating a file or dir
