@@ -32,6 +32,7 @@ or opening, and preview images (poorly).
 
 ### Does (needs work)
 - image preview
+- copy files/dirs (works but if a file or dir already exists with the same name in the dir you are copying to, it will overwrite it)
 
 ### Does not...yet (TODO)
 - extract/compress

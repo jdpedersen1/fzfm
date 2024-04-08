@@ -11,8 +11,8 @@ fzfm () {
             --bind "ctrl-d:execute(bash -e ~/.local/fzfm/create_dir.sh)+reload(lsd -a -1)" \
             --bind "ctrl-f:execute(bash -e ~/.local/fzfm/create_file.sh)+reload(lsd -a -1)" \
             --bind "ctrl-t:execute(trash {})+reload(lsd -a -1)" \
-            --bind "ctrl-c:execute([ -d /tmp/copied ] || mkdir /tmp/copied && cp -r {} /tmp/copied/)" \
-            --bind "ctrl-g:execute(mv /tmp/copied/* .)+reload(lsd -a -1)" \
+            --bind "ctrl-c:execute([ -d /tmp/copied/ ] || mkdir /tmp/copied && cp {} /tmp/copied)" \
+            --bind "ctrl-g:execute(mv /tmp/copied/* . && rm -rf /tmp/copied)+reload(lsd -a -1)" \
             --bind "space:toggle" \
             --color=fg:#d0d0d0,fg+:#d0d0d0,bg+:#262626 \
             --color=hl:#5f87af,hl+:#487caf,info:#afaf87,marker:#274a37 \
@@ -21,17 +21,17 @@ fzfm () {
             --pointer  \
             --reverse \
             --multi \
-            --info right \
+            --info inline-right \
             --prompt "Search: " \
             --border "bold" \
             --border-label "$(pwd)/" \
             --preview-window=right:65% \
-            --preview 'cd_pre="$(echo $(pwd)/$(echo {}))";
+            --preview 'sel=$(echo {} | cut -d " " -f 2); cd_pre="$(echo $(pwd)/$(echo {}))";
                     echo "Folder: " $cd_pre;
-                    lsd -a --color=always "${cd_pre}";
-                    cur_file="$(file {} | grep [Tt]ext | wc -l)";
+                    lsd -a --icon=always --color=always "${cd_pre}";
+                    cur_file="$(file $(echo $sel) | grep [Tt]ext | wc -l)";
                     if [[ "${cur_file}" -eq 1 ]]; then
-                        bat --style=numbers --theme=ansi --color=always {} 2>/dev/null
+                        bat --style=numbers --theme=ansi --color=always $sel 2>/dev/null
                     else
                         chafa -c full --color-space rgb --dither none -p on -w 9 2>/dev/null {}
                         fi')"
