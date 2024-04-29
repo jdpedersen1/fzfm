@@ -1,4 +1,6 @@
 # Fzfm - Fuzzy file manager
+### NOTE: this is still a work in progress, read entire readme before cloning or using and use at your own risk)
+
 This is a terminal file manager in the style of Ranger, nnn, lf, vifm, etc. It uses bash, fzf, and chafa
 to display directory contents, preview the contents of the selected directory or file before entering
 or opening, and preview images (poorly). 
@@ -32,7 +34,7 @@ or opening, and preview images (poorly).
 
 ### Does (needs work)
 - image preview
-- copy files/dirs (works but if a file or dir already exists with the same name in the dir you are copying to, it will overwrite it)
+- copy files/dirs (WARNING: works but if a file or dir already exists with the same name in the dir you are copying to, it will overwrite it)
 
 ### Does not...yet (TODO)
 - extract/compress

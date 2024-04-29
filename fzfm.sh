@@ -11,8 +11,8 @@ fzfm () {
             --bind "ctrl-d:execute(bash -e ~/.local/fzfm/create_dir.sh)+reload(lsd -a -1)" \
             --bind "ctrl-f:execute(bash -e ~/.local/fzfm/create_file.sh)+reload(lsd -a -1)" \
             --bind "ctrl-t:execute(trash {})+reload(lsd -a -1)" \
-            --bind "ctrl-c:execute([ -d /tmp/copied/ ] || mkdir /tmp/copied && cp {} /tmp/copied)" \
-            --bind "ctrl-g:execute(mv /tmp/copied/* . && rm -rf /tmp/copied)+reload(lsd -a -1)" \
+            --bind "ctrl-c:execute([ -d /tmp/copied/ ] || mkdir /tmp/copied && cp {} /tmp/copied/"$(basename {})".copy)" \
+            --bind "ctrl-g:execute(mv -n /tmp/copied/* . && rm -rf /tmp/copied)+reload(lsd -a -1)" \
             --bind "space:toggle" \
             --color=fg:#d0d0d0,fg+:#d0d0d0,bg+:#262626 \
             --color=hl:#5f87af,hl+:#487caf,info:#afaf87,marker:#274a37 \
