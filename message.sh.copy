@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Function to display a simple message box
+show_message_box() {
+    message="$1"
+    printf "%s\n" "$message"
+}
+
+# Run a command and capture its output
+command_output=$(stat $1)
+
+# Display the output in a message box
+show_message_box "$command_output"
+read -r -p "Press Enter to Continue..."

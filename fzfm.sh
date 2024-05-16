@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+mkdir /tmp/copied
 
 fzfm () {
     while true; do
@@ -10,9 +11,11 @@ fzfm () {
             --bind "shift-down:preview-down" \
             --bind "ctrl-d:execute(bash -e ~/.local/fzfm/create_dir.sh)+reload(lsd -a -1)" \
             --bind "ctrl-f:execute(bash -e ~/.local/fzfm/create_file.sh)+reload(lsd -a -1)" \
-            --bind "ctrl-t:execute(trash {})+reload(lsd -a -1)" \
-            --bind "ctrl-c:execute([ -d /tmp/copied/ ] || mkdir /tmp/copied && cp {} /tmp/copied/"$(basename {})".copy)" \
-            --bind "ctrl-g:execute(mv -n /tmp/copied/* . && rm -rf /tmp/copied)+reload(lsd -a -1)" \
+            --bind "ctrl-t:execute(trash {+})+reload(lsd -a -1)" \
+            --bind "ctrl-c:execute(cp -R {} /tmp/copied/$(basename {}).copy)" \
+            --bind "ctrl-m:execute(mv -n {} /tmp/copied/$(basename {}).copy)+reload(lsd -a -1)" \
+            --bind "ctrl-g:execute(mv -n /tmp/copied/* . && rm -rf /tmp/copied/*)+reload(lsd -a -1)" \
+            --bind "esc:execute(rm /tmp/copied/*)+abort" \
             --bind "space:toggle" \
             --color=fg:#d0d0d0,fg+:#d0d0d0,bg+:#262626 \
             --color=hl:#5f87af,hl+:#487caf,info:#afaf87,marker:#274a37 \
