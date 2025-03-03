@@ -4,7 +4,7 @@ mkdir /tmp/copied
 
 fzfm () {
     while true; do
-        selection="$(lsd -a -1 | fzf \
+        selection="$(ls -a -1 | fzf \
             --bind "left:pos(2)+accept" \
             --bind "right:accept" \
             --bind "shift-up:preview-up" \
@@ -32,12 +32,15 @@ fzfm () {
             --preview 'sel=$(echo {} | cut -d " " -f 2); cd_pre="$(echo $(pwd)/$(echo {}))";
                     echo "Folder: " $cd_pre;
                     lsd -a --icon=always --color=always "${cd_pre}";
-                    cur_file="$(file $(echo $sel) | grep [Tt]ext | wc -l)";
-                    if [[ "${cur_file}" -eq 1 ]]; then
-                        bat --style=numbers --theme=ansi --color=always $sel 2>/dev/null
-                    else
-                        chafa -c full --color-space rgb --dither none -p on -w 9 2>/dev/null {}
-                        fi')"
+                    kitten icat --clear break 2>/dev/null
+                    case "$(file --mime-type -b {})" in
+                        text/*)
+                            bat --style=numbers --theme=ansi --color=always {} 2>/dev/null
+                            ;;
+                        image/*)
+                            kitten icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@20x1 {}
+                            ;;
+                    esac')"
                         if [[ -d ${selection} ]]; then
                             >/dev/null cd "${selection}"
                         elif [[ -f "${selection}" ]]; then
@@ -63,7 +66,7 @@ fzfm () {
                                     for fType in ${selection}
                                     do
                                         if [[ "${fType}" == *.docx ]] || [[ "${fType}" == *.odt ]]; then
-                                            libreoffice "${selection}" > /dev/null
+                                            devour libreoffice "${selection}" > /dev/null
                                         elif [[ "${fType}" == *.pdf ]]; then
                                             zathura 2>/dev/null "${selection}"
                                         fi
@@ -81,4 +84,3 @@ fzfm () {
                 }
                 clear
                 fzfm
-

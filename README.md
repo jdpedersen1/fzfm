@@ -1,44 +1,64 @@
-# Fzfm - Fuzzy file manager
-### NOTE: this is still a work in progress, read entire readme before cloning or using and use at your own risk)
 
-This is a terminal file manager in the style of Ranger, nnn, lf, vifm, etc. It uses bash, fzf, and chafa
-to display directory contents, preview the contents of the selected directory or file before entering
-or opening, and preview images (poorly). 
+# Fzfm - Fuzzy File Manager
 
-![](fzfm.png)
+**Note:** This project is still a work in progress. Please read the entire README before cloning or using, and proceed at your own risk.
 
-### Installation
-- Clone repo
-- cd into fzfm
-- chmod +x all scripts in fzfm dir
-- Add to path if not already in a dir that is in your path (only necessary if you don't want to have to type entire path to script when running)
+Fzfm is a terminal-based file manager inspired by tools like Ranger, nnn, lf, vifm, etc. It leverages `bash`, `fzf`, and `Kitty` (via `icat` for image preview) to offer a user-friendly way to navigate and manage files from the terminal. Fzfm supports file previewing, directory traversal, and viewing images (albeit with limited functionality).
 
-### Dependencies (for the script to work)
-- fzf
-- chafa (for now, working to get ueberzug or ueberzugpp working)
+![Screenshot](fzfm.png)
 
-### Dependencies (for extra functionality, or edit script to use programs of your choice)
-- libreoffice (for opening word docs)
-- zathura (for opening PDFs)
-- mpv (for video)
-- sxiv (for images)
-- neovim/vim (for editing text files)
-- gimp (for xcf files)
+## Installation
 
-###  Does well
-- traverse file tree 
-- preview files and directories 
-- open files using different software based on file type
-- create new files and directories
-- delete files/directories
+To install Fzfm, follow these steps:
 
-### Does (needs work)
-- image preview
-- copy files/dirs (WARNING: works but if a file or dir already exists with the same name in the dir you are copying to, it will overwrite it)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/jdpedersen1/fzfm.git
+   ```
+2. Navigate to the `fzfm` directory:
+   ```bash
+   cd fzfm
+   ```
+3. Grant execution permissions to the scripts:
+   ```bash
+   chmod +x *.sh
+   ```
+4. Optionally, add the directory to your `PATH` if you prefer to run the scripts without typing the full path.
 
-### Does not...yet (TODO)
-- extract/compress
-- rename
+## Dependencies
 
-### Known "bugs"
-unexpecte behavior after creating a file or dir
+### Required Dependencies
+- `fzf`: For fuzzy file searching and selection.
+
+### Preview Functionality Dependencies
+The following programs are required for file previews. You can modify the scripts to use alternatives if needed:
+
+- `libreoffice`: For opening Word documents.
+- `zathura`: For opening PDFs.
+- `mpv`: For video playback.
+- `sxiv`: For image viewing.
+- `neovim` or `vim`: For editing text files.
+- `gimp`: For opening `.xcf` files.
+- `bat`: For previewing text files with syntax highlighting.
+- `kitty`: For image preview (Kitty terminal emulator is required for this feature).
+
+## Features
+
+### Fully Supported:
+- Traverse file tree.
+- Preview files and directories before opening.
+- Open files with appropriate applications based on file type.
+- Create new files and directories.
+- Delete files and directories.
+- Image preview (requires `kitty` terminal emulator).
+
+### In Progress:
+- Copy files and directories.
+  - **Warning:** If the target directory already contains a file or directory with the same name, it will be overwritten.
+
+### Planned Features (TODO):
+- File extraction and compression.
+- File renaming functionality.
+
+## Known Issues
+- **Unexpected behavior** may occur after creating files or directories. This is being investigated.
