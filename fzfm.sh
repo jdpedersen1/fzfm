@@ -1,86 +1,95 @@
 #!/usr/bin/env bash
 
-mkdir /tmp/copied
+# previewer
+fzf_preview() {
+    local selected="$1"
+    if [[ -d "$selected" ]]; then
+        if command -v lsd &>/dev/null; then
+            lsd -a --icon=always --color=always "$selected"
+        else
+            ls "$selected" --color -Av --group-directories-first
+        fi
+    elif [[ -f "$selected" ]]; then
+        local mime=$(file --mime-type -b $selected)
+        case "$mime" in
+        text/*)
+            bat --style=numbers --theme=gruvbox-dark --color=always "$selected" || cat "$selected"
+            ;;
+        image/*)
+            # might need to update this
+            kitten icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@20x1 "$selected"
+            ;;
+        esac
+    fi
+}
 
-fzfm () {
+# file opener
+fzf_file_handlers() {
+    local selected="$1"
+    local mime=$(file --mime-type -b $selected)
+    case $mime in
+    text/*)
+        nvim -u $HOME/.config/nvim/init.lua "$selected"
+        ;;
+    image/*)
+        for fType in $selected; do
+            if [[ "${fType}" == *.xcf ]]; then
+                gimp 2>/dev/null "$selected"
+            else
+                sxiv "$selected"
+            fi
+        done
+        ;;
+    video/*)
+        mpv -fs "$selected" >/dev/null
+        ;;
+    application/*)
+        for fType in $selected; do
+            if [[ "${fType}" == *.docx ]] || [[ "${fType}" == *.odt ]]; then
+                devour libreoffice "$selected" >/dev/null
+            elif [[ "${fType}" == *.pdf ]]; then
+                zathura 2>/dev/null "$selected"
+            fi
+        done
+        ;;
+
+    inode/*)
+        nvim -u $HOME/.config/nvim/init.lua "$selected"
+        ;;
+    esac
+}
+
+# import files
+curr_dir=$(dirname "$0")
+source $curr_dir/utils.sh
+source $curr_dir/bindkeys.sh # source utils before bindkeys
+export -f fzf_preview fzf_file_handlers
+
+fzf_opts="--color=fg:#d0d0d0,fg+:#d0d0d0,bg+:#262626 --color=hl:#5f87af,hl+:#487caf,info:#afaf87,marker:#274a37 \
+    --color=pointer:#a62b2b,spinner:#af5fff,prompt:#876253,header:#87afaf --preview-window=right:65% \
+    --height 95% --pointer  --reverse --multi --info inline-right"
+bind_keys=$(build_bind_keys)
+
+fzfm() {
+    # main loop
+    # find_cmd is defined in bindkeys.sh so it can use it for reloading fzf
     while true; do
-        selection="$(ls -a -1 | fzf \
-            --bind "left:pos(2)+accept" \
-            --bind "right:accept" \
-            --bind "shift-up:preview-up" \
-            --bind "shift-down:preview-down" \
-            --bind "ctrl-d:execute(bash -e ~/.local/fzfm/create_dir.sh)+reload(lsd -a -1)" \
-            --bind "ctrl-f:execute(bash -e ~/.local/fzfm/create_file.sh)+reload(lsd -a -1)" \
-            --bind "ctrl-t:execute(trash {+})+reload(lsd -a -1)" \
-            --bind "ctrl-c:execute(cp -R {} /tmp/copied/$(basename {}).copy)" \
-            --bind "ctrl-m:execute(mv -n {} /tmp/copied/$(basename {}).copy)+reload(lsd -a -1)" \
-            --bind "ctrl-g:execute(mv -n /tmp/copied/* . && rm -rf /tmp/copied/*)+reload(lsd -a -1)" \
-            --bind "esc:execute(rm /tmp/copied/*)+abort" \
-            --bind "space:toggle" \
-            --color=fg:#d0d0d0,fg+:#d0d0d0,bg+:#262626 \
-            --color=hl:#5f87af,hl+:#487caf,info:#afaf87,marker:#274a37 \
-            --color=pointer:#a62b2b,spinner:#af5fff,prompt:#876253,header:#87afaf \
-            --height 95% \
-            --pointer  \
-            --reverse \
-            --multi \
-            --info inline-right \
+        selection=$(eval "\$find_cmd" | fzf $fzf_opts --bind "$bind_keys" \
             --prompt "Search: " \
             --border "bold" \
             --border-label "$(pwd)/" \
-            --preview-window=right:65% \
-            --preview 'sel=$(echo {} | cut -d " " -f 2); cd_pre="$(echo $(pwd)/$(echo {}))";
-                    echo "Folder: " $cd_pre;
-                    lsd -a --icon=always --color=always "${cd_pre}";
-                    kitten icat --clear break 2>/dev/null
-                    case "$(file --mime-type -b {})" in
-                        text/*)
-                            bat --style=numbers --theme=ansi --color=always {} 2>/dev/null
-                            ;;
-                        image/*)
-                            kitten icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@20x1 {}
-                            ;;
-                    esac')"
-                        if [[ -d ${selection} ]]; then
-                            >/dev/null cd "${selection}"
-                        elif [[ -f "${selection}" ]]; then
-                            file_type=$(file -b --mime-type "${selection}" | cut -d'/' -f1)
-                            case $file_type in
-                                "text")
-                                    nvim -u $HOME/.config/nvim/init.lua "${selection}"
-                                    ;;
-                                "image")
-                                    for fType in ${selection}
-                                    do 
-                                        if [[ "${fType}" == *.xcf ]]; then
-                                            gimp 2>/dev/null "${selection}"
-                                        else
-                                            sxiv "${selection}"
-                                        fi
-                                    done
-                                    ;;
-                                "video")
-                                    mpv -fs "${selection}" > /dev/null
-                                    ;;
-                                "application")
-                                    for fType in ${selection}
-                                    do
-                                        if [[ "${fType}" == *.docx ]] || [[ "${fType}" == *.odt ]]; then
-                                            devour libreoffice "${selection}" > /dev/null
-                                        elif [[ "${fType}" == *.pdf ]]; then
-                                            zathura 2>/dev/null "${selection}"
-                                        fi
-                                    done
-                                    ;;
+            --preview="bash -c 'fzf_preview {}'" --exit-0)
 
-                                "inode")
-                                    nvim -u $HOME/.config/nvim/init.lua "${selection}"
-                                    ;;
-                            esac
-                        else
-                            break
-                        fi
-                    done
-                }
-                clear
-                fzfm
+        if [[ -d ${selection} ]]; then
+            cd "$selection"
+            continue
+        elif [[ -f "$selection" ]]; then
+            fzf_file_handlers "$selection"
+        else
+            break
+        fi
+    done
+}
+
+clear
+fzfm
