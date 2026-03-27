@@ -9,7 +9,17 @@ mkdir /tmp/copied
 imgview() {
     local file="$1"
     [[ -f "$file" ]] || return
-    kitten icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@20x1 "$file"
+
+    local cols="${FZF_PREVIEW_COLUMNS:-80}"
+    local lines="${FZF_PREVIEW_LINES:-30}"
+
+    if command -v chafa &>/dev/null; then
+        chafa --size=${cols}x$((lines - 2)) "$file"
+    elif command -v kitten &>/dev/null; then
+        kitten icat --clear --transfer-mode=memory --stdin=no --place=${cols}x${lines}@20x1 "$file"
+    elif command -v viu &>/dev/null; then
+        viu -h $((lines - 2)) -w "$cols" "$file"
+    fi
 }
 
 vidview() {
@@ -26,7 +36,6 @@ vidview() {
         timeout 5 ffmpeg -i "$file" -ss 00:00:01 -vframes 1 "$thumb" -y 2>/dev/null
     fi
     
-    # Show text info at top
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "📹 Video: $(basename "$file")"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -44,12 +53,16 @@ vidview() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
     
-    # Display thumbnail below text (starting at row 10)
     if [[ -f "$thumb" ]]; then
-        # Use remaining space for image
         local img_height=$((FZF_PREVIEW_LINES - 12))
-        kitten icat --clear --transfer-mode=memory --stdin=no \
-            --place=${FZF_PREVIEW_COLUMNS}x${img_height}@0x10 "$thumb"
+        if command -v chafa &>/dev/null; then
+            chafa --size=${FZF_PREVIEW_COLUMNS}x$((img_height - 2)) "$thumb"
+        elif command -v kitten &>/dev/null; then
+            kitten icat --clear --transfer-mode=memory --stdin=no \
+                --place=${FZF_PREVIEW_COLUMNS}x${img_height}@0x10 "$thumb"
+        elif command -v viu &>/dev/null; then
+            viu -h $((img_height - 2)) -w "${FZF_PREVIEW_COLUMNS:-80}" "$thumb"
+        fi
     fi
 }
 
@@ -158,6 +171,33 @@ rem_copied() {
     fi
 }
 
+create_dir() {
+    current_dir=$(pwd)
+    new_dir_name=$(echo | fzf --print-query --prompt "Enter Directory Name: " | tail -n 1)
+    if [ -n "$new_dir_name" ]; then
+        if [[ "$new_dir_name" == /* ]] || [[ "$new_dir_name" == */* ]]; then
+            dir_path="$new_dir_name"
+        else
+            dir_path="$current_dir/$new_dir_name"
+        fi
+        mkdir -p "$dir_path" 2>>/tmp/fzf-error.log
+    fi
+}
+
+create_file() {
+    current_dir=$(pwd)
+    new_file_name=$(echo | fzf --print-query --prompt "Enter File Name: " | tail -n 1)
+    if [ -n "$new_file_name" ]; then
+        if [[ "$new_file_name" == /* ]] || [[ "$new_file_name" == */* ]]; then
+            file_path="$new_file_name"
+        else
+            file_path="$current_dir/$new_file_name"
+        fi
+        mkdir -p "$(dirname "$file_path")" 2>>/tmp/fzf-error.log
+        touch "$file_path" 2>>/tmp/fzf-error.log
+    fi
+}
+
 export -f rem_copied
 export -f fileview
 export -f imgview
@@ -167,6 +207,8 @@ export -f move_files
 export -f rename_file
 export -f paste_files
 export -f set_background
+export -f create_dir
+export -f create_file
 
 fzfm () {
     while true; do
@@ -176,13 +218,13 @@ fzfm () {
             --bind "enter:accept" \
             --bind "alt-up:preview-up" \
             --bind "alt-down:preview-down" \
-            --bind "alt-d:execute(bash -e ~/.local/fzfm/create_dir.sh; sync)+reload(lsd -a)" \
-            --bind "alt-f:execute(bash -e ~/.local/fzfm/create_file.sh; sync)+reload(lsd -a)" \
+            --bind "alt-d:execute(create_dir; sync)+reload(lsd -a)" \
+            --bind "alt-f:execute(create_file; sync)+reload(lsd -a)" \
             --bind "alt-t:execute(trash {+2})+reload(lsd -a)" \
             --bind "alt-c:execute-silent(copy_files {+})+reload(lsd -a)" \
             --bind "alt-m:execute(move_files {+})+reload(lsd -a)" \
             --bind "alt-p:execute-silent(paste_files)+reload(lsd -a)" \
-            --bind "alt-r:execute(bash -e ~/.local/fzfm/rename.sh {}; sync)+reload(lsd -a)" \
+            --bind "alt-r:execute(rename_file {}; sync)+reload(lsd -a)" \
             --bind "alt-b:execute(set_background "$(pwd)"/{2})+reload(lsd -a)" \
             --bind "alt-s:execute(mpv -fs {2} >/dev/null 2>&1 &)" \
             --bind "esc:execute(rem_copied)+abort" \
