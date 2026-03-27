@@ -39,7 +39,7 @@ fzfm provides a lightweight, keyboard-driven file management experience. Navigat
 
 ```bash
 # Clone the repository
-git clone https://codeberg.org/username/fzfm.git ~/.local/fzfm
+git clone https://codeberg.org/JakeAtLinux/fzfm.git ~/.local/fzfm
 cd fzfm
 
 # Check dependencies
@@ -62,7 +62,7 @@ make install
 
 ```bash
 # Clone the repository
-git clone https://codeberg.org/username/fzfm.git ~/.local/fzfm
+git clone https://codeberg.org/JakeAtLinux/fzfm.git ~/.local/fzfm
 
 # Add to your shell profile (~/.bashrc, ~/.zshrc, etc.)
 source ~/.local/fzfm/fzfm.sh
