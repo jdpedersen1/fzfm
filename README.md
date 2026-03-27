@@ -1,142 +1,149 @@
-# Fzfm - Fuzzy File Manager
+# fzfm - Fuzzy File Manager
 
-A modern, terminal-based file manager written in bash that leverages [fzf](https://github.com/junegunn/fzf) for fuzzy searching and navigation. Inspired by tools like Ranger, nnn, lf, and vifm.
+A modern, terminal-based file manager written in Bash that uses [fzf](https://github.com/junegunn/fzf) for fuzzy finding and [lsd](https://github.com/lsd-rs/lsd) for directory listings.
+
+## Overview
+
+fzfm provides a lightweight, keyboard-driven file management experience. Navigate directories, preview files, and perform common file operations without leaving your terminal.
 
 ![Screenshot](fzfm.png)
+
+## Requirements
+
+### Required
+
+[![fzf](https://img.shields.io/badge/fzf-%23000?style=flat&logo=)](https://github.com/junegunn/fzf)
+[![lsd](https://img.shields.io/badge/lsd-%23000?style=flat)](https://github.com/lsd-rs/lsd)
+
+- [fzf](https://github.com/junegunn/fzf) - Fuzzy finder
+- [lsd](https://github.com/lsd-rs/lsd) - Modern ls with icons
+
+### Optional
+
+| Tool | Purpose |
+|------|---------|
+| [bat](https://github.com/sharkdp/bat) | Text file preview with syntax highlighting |
+| [neovim](https://neovim.io) | Text file editing |
+| [chafa](https://github.com/hpjansson/chafa) | Image preview (all terminals) |
+| [viu](https://github.com/atqn/viu) | Alternative image preview |
+| [kitty](https://github.com/kovidgoyal/kitty) + icat | Image preview (Kitty terminal) |
+| [sxiv](https://github.com/muennich/sxiv) | Image viewer |
+| [zathura](https://pwmt.org/projects/zathura/) | PDF viewer |
+| [libreoffice](https://www.libreoffice.org) | Document viewing |
+| [mpv](https://mpv.io) | Video playback |
+| [gimp](https://www.gimp.org) | XCF image editing |
+| [trash-put](https://github.com/andreafrancia/trash-cli) | Trash support |
+| [ffmpeg](https://ffmpeg.org) | Video thumbnail generation |
 
 ## Installation
 
 ```bash
-git clone https://github.com/jdpedersen1/fzfm.git
+# Clone the repository
+git clone https://codeberg.org/username/fzfm.git ~/.local/fzfm
 cd fzfm
-chmod +x fzfm.sh
+
+# Check dependencies
+make check-deps
+
+# Install (defaults to ~/.local)
+make install
 ```
 
-Add to your shell profile for convenient access:
-```bash
-# In ~/.bashrc or ~/.zshrc
-source /path/to/fzfm/fzfm.sh
-```
+### Installation Options
 
-## Dependencies
+| Command | Description |
+|---------|-------------|
+| `make check-deps` | Check for required dependencies |
+| `make install` | Install to `~/.local/bin` |
+| `make install PREFIX=/usr` | Install system-wide |
+| `make uninstall` | Remove installed files |
 
-### Required
-- [fzf](https://github.com/junegunn/fzf) - Fuzzy file searching
-- `lsd` - Modern ls replacement with icons
-- `jq` - JSON processing for clipboard
-
-### Optional (for previews)
-| Tool | Purpose |
-|------|---------|
-| `bat` | Text file preview with syntax highlighting |
-| `neovim` / `vim` | Text file editing |
-| `kitty` + `icat` | Image preview (Kitty terminal) |
-| `ueberzugpp` | Image preview (all terminals) |
-| `sxiv` | Image viewing (fallback) |
-| `zathura` | PDF viewing |
-| `libreoffice` | Word documents |
-| `mpv` | Video playback |
-| `gimp` | `.xcf` files |
-| `trash-put` | Trash support |
-
-## Configuration
-
-Copy the example config and customize:
-```bash
-mkdir -p ~/.config/fzfm
-cp config.example ~/.config/fzfm/config
-```
-
-### Key Settings
+### Manual Installation
 
 ```bash
-# Image preview backend: "kitty", "ueberzugpp", or "auto"
-IMAGE_BACKEND="auto"
+# Clone the repository
+git clone https://codeberg.org/username/fzfm.git ~/.local/fzfm
 
-# Show hidden files (yes/no)
-SHOW_HIDDEN="no"
-
-# Use trash for deletion (yes/no)
-USE_TRASH="yes"
-
-# Preview window size
-PREVIEW_SIZE="65%"
-
-# Sort order: name, size, time, extension
-SORT_ORDER="name"
+# Add to your shell profile (~/.bashrc, ~/.zshrc, etc.)
+source ~/.local/fzfm/fzfm.sh
 ```
 
 ## Usage
 
 ```bash
-./fzfm.sh
+# Run fzfm
+fzfm
+
+# Show help
+fzfm.sh --help
+
+# Show version
+fzfm.sh --version
 ```
 
-### Keybindings
+## Keybindings
 
 | Key | Action |
 |-----|--------|
-| `Enter` | Open file/directory |
+| `Enter` | Open file/folder |
 | `Left` | Go to parent directory |
-| `Right` | Open file |
-| `Tab` | Toggle selection |
-| `Space` | Toggle selection (alternative) |
-| `Alt+n` | Create new file |
-| `Alt+d` | Create new directory |
+| `Right` | Open file/folder |
+| `Space` | Toggle selection (multi-select) |
 | `Alt+c` | Copy selected files |
 | `Alt+m` | Move selected files |
-| `Alt+v` | Paste files |
+| `Alt+p` | Paste copied/moved files |
 | `Alt+r` | Rename file |
-| `Alt+t` | Trash selected files |
-| `Alt+b` | Set as wallpaper (image) |
+| `Alt+d` | Create directory |
+| `Alt+f` | Create file |
+| `Alt+t` | Move to trash |
+| `Alt+Up` | Preview up |
+| `Alt+Down` | Preview down |
 | `Alt+s` | Play video fullscreen |
-| `Ctrl+r` | Refresh directory |
-| `Esc` | Clear clipboard and quit |
-| `q` | Quit |
+| `Alt+b` | Set as wallpaper |
+| `Esc` | Clear clipboard & exit |
 
-## Features
+## Image Preview
 
-### Implemented
-- Fuzzy file and directory navigation
-- File/directory preview before opening
-- Image preview (Kitty or ueberzugpp)
-- Video thumbnail preview with metadata
-- Create, rename, delete files and directories
-- Copy/Move/Paste file operations with clipboard
-- Set wallpaper from image files
-- Directory history tracking
-- Configurable via `~/.config/fzfm/config`
-- Proper error handling and logging
+fzfm automatically detects the best available image preview method:
 
-### Image Preview
-- **Kitty**: Best performance, requires Kitty terminal
-- **ueberzugpp**: Works with Alacritty, foot, Wezterm, Windows Terminal
-- **Auto-detect**: Automatically uses best available backend
+1. **chafa** - Unicode art preview (works in any terminal)
+2. **kitten icat** - Native protocol (Kitty terminal only)
+3. **viu** - ASCII art fallback
 
-### Clipboard System
-- Copy (`Alt+c`) stores files to JSON clipboard
-- Move (`Alt+m`) stores files as "move" action
-- Paste (`Alt+v`) pastes to current directory
-- Clipboard persists across sessions (in `~/.cache/fzfm/clipboard`)
+## Clipboard Operations
+
+- **Copy** (`Alt+c`): Stores files in `/tmp/copied` with `.copy` suffix
+- **Move** (`Alt+m`): Same as copy but removes original
+- **Paste** (`Alt+p`): Moves files from staging to current directory
 
 ## Troubleshooting
 
-### Image preview not working
-1. Ensure you're using Kitty terminal OR have `ueberzugpp` installed
-2. Set `IMAGE_BACKEND="kitty"` or `IMAGE_BACKEND="ueberzugpp"` explicitly
+### Install dependencies on Void Linux
 
-### Missing dependencies
 ```bash
-# Arch
-sudo pacman -S fzf lsd jq
+# Required
+sudo xbps-install fzf lsd
 
-# Debian/Ubuntu
-sudo apt install fzf lsd jq
+# Optional
+sudo xbps-install bat chafa ffmpeg trash-cli
 ```
 
-### Logs
-Check logs at `~/.cache/fzfm/fzfm.log` for debugging.
+### Install dependencies on Arch Linux
+
+```bash
+sudo pacman -S fzf lsd bat chafa ffmpeg trash-cli
+```
+
+### Install dependencies on Debian/Ubuntu
+
+```bash
+sudo apt install fzf lsd bat chafa ffmpeg trash-cli
+```
+
+## Configuration
+
+No configuration file required. Edit `fzfm.sh` directly for customization.
 
 ## License
 
-MIT
+MIT License
