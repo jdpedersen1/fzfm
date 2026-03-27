@@ -1,25 +1,31 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-selected_dir="$(pwd)"
-#new_file_name=$(zenity --entry --title="Enter New File Name" --text="Enter the name of the new file:")
-#new_file_name=$(dialog --inputbox "Enter the name of the new file:" 10 40 3>&1 1>&2 2>&3)
-#read -rp "Enter File Name: " new_file_name
-#file_names=$(dialog --stdout --inputbox "Enter file names separated by spaces:" 0 0)
+# Create a new file in the current working directory or at a specified path using fzf prompt
 
-# Create files based on user input
-#for file_name in $file_names; do
-#    touch "$file_name"
-#done
+current_dir=$(pwd)
+echo "Prompting for new file from $current_dir" >> /tmp/fzf-create-file.log
+tput reset 2>/dev/null
+new_file_name=$(echo | fzf --print-query --prompt "Enter File Name: " | tail -n 1)
+echo "User entered: $new_file_name" >> /tmp/fzf-create-file.log
 
-#touch "${selected_dir}/${file_name}" && reset && kill $PPID && fzfm.sh
-#touch "${selected_dir}/${file_name}"
-
-# Prompt the user to enter file names separated by spaces
-read -rp "Enter file names separated by spaces: " filenames
-
-# Loop through each filename entered by the user
-for filename in $filenames; do
-    # Create the file
-    touch "$filename"
-done
-
+if [ -n "$new_file_name" ]; then
+    # Check if input is an absolute path (starts with /) or contains a slash (relative path)
+    if [[ "$new_file_name" == /* ]] || [[ "$new_file_name" == */* ]]; then
+        # Use the input as the full path
+        file_path="$new_file_name"
+    else
+        # Create in current directory
+        file_path="$current_dir/$new_file_name"
+    fi
+    echo "Attempting to create: $file_path" >> /tmp/fzf-create-file.log
+    # Create parent directories if needed
+    mkdir -p "$(dirname "$file_path")" 2>>/tmp/fzf-error.log
+    touch "$file_path" 2>>/tmp/fzf-error.log
+    if [ $? -eq 0 ]; then
+        echo "Created file $file_path" >> /tmp/fzf-create-file.log
+    else
+        echo "Failed to create file $file_path" >> /tmp/fzf-create-file.log
+    fi
+else
+    echo "No file created: empty name" >> /tmp/fzf-create-file.log
+fi

@@ -1,0 +1,147 @@
+# Fzfm Configuration File
+# Place in ~/.config/fzfm/config or $FZFMDIR/config
+
+# ═══════════════════════════════════════════════════════════════════
+# GENERAL
+# ═══════════════════════════════════════════════════════════════════
+
+# Script directory (auto-detected if empty)
+FZFM_DIR=""
+
+# Clipboard file location (stores copy/paste buffer)
+CLIPBOARD_FILE="${HOME}/.cache/fzfm/clipboard"
+
+# Directory history file
+HISTORY_FILE="${HOME}/.cache/fzfm/history"
+
+# Log file
+LOG_FILE="${HOME}/.cache/fzfm/fzfm.log"
+
+# ═══════════════════════════════════════════════════════════════════
+# TERMINAL & IMAGE PREVIEW
+# ═══════════════════════════════════════════════════════════════════
+
+# Image preview backend: "kitty", "ueberzugpp", or "auto" (auto-detect)
+IMAGE_BACKEND="auto"
+
+# Force kitten icat even on non-Kitty terminals (requires SSH/kitty pipe)
+FORCE_KITTY_ICAT="no"
+
+# Video thumbnail cache directory
+VIDEO_CACHE_DIR="/tmp/fzfm_video_cache"
+
+# Image scale mode for ueberzugpp: fit, fill, stretch
+IMAGE_SCALE="fit"
+
+# ═══════════════════════════════════════════════════════════════════
+# FILE MANAGER BEHAVIOR
+# ═══════════════════════════════════════════════════════════════════
+
+# Show hidden files by default (yes/no)
+SHOW_HIDDEN="no"
+
+# Sort order: name, size, time, extension
+SORT_ORDER="name"
+
+# Reverse sort (yes/no)
+SORT_REVERSE="no"
+
+# Preview window size (percentage or lines)
+PREVIEW_SIZE="65%"
+
+# File opener commands (leave empty to use sensible defaults)
+OPENER_TEXT="nvim"
+OPENER_IMAGE="sxiv"
+OPENER_VIDEO="mpv"
+OPENER_PDF="zathura"
+OPENER_DOC="libreoffice"
+
+# Use trash for deletions instead of permanent delete (yes/no)
+USE_TRASH="yes"
+
+# ═══════════════════════════════════════════════════════════════════
+# KEYBINDINGS (can be single key or combinations)
+# ═══════════════════════════════════════════════════════════════════
+
+# Navigation
+KEY_OPEN="enter"
+KEY_BACK="left"
+KEY_FORWARD="right"
+KEY_UP="alt-up"
+KEY_DOWN="alt-down"
+KEY_HOME="alt-h"
+KEY_GO_TOP="home"
+KEY_GO_BOTTOM="end"
+
+# Selection
+KEY_TOGGLE="tab"
+KEY_SELECT_ALL="ctrl-a"
+KEY_SELECT_ALL_TOGGLE="alt-a"
+KEY_INVERT="alt-i"
+
+# File Operations
+KEY_COPY="ctrl-c"
+KEY_PASTE="ctrl-v"
+KEY_CUT="ctrl-x"
+KEY_DELETE="delete"
+KEY_RENAME="alt-r"
+KEY_NEW_FILE="alt-n"
+KEY_NEW_DIR="alt-d"
+
+# Search & Filter
+KEY_SEARCH="/"
+KEY_FILTER_IMAGES="alt-i"
+KEY_FILTER_VIDEOS="alt-v"
+KEY_FILTER_DOCS="alt-o"
+KEY_FILTER_CLEAR="alt-\\"
+
+# Preview
+KEY_PREVIEW="space"
+KEY_PREVIEW_TOGGLE="alt-p"
+
+# Misc
+KEY_QUIT="q"
+KEY_HELP="?"
+KEY_REFRESH="ctrl-r"
+KEY_EXECUTE="alt-e"
+KEY_SET_WALLPAPER="alt-b"
+
+# ═══════════════════════════════════════════════════════════════════
+# COLORS & STYLING
+# ═══════════════════════════════════════════════════════════════════
+
+# FZF color scheme
+FG="#d0d0d0"
+FG_ACTIVE="#4b443e"
+BG="#000000"
+HL="#5f87af"
+HL_ACTIVE="#487caf"
+INFO="#afaf87"
+MARKER="#274a37"
+POINTER="#4b443e"
+SPINNER="#af5fff"
+PROMPT="#4b443e"
+HEADER="#87afaf"
+
+# Border style: sharp, bold, rounded, double, block
+BORDER_STYLE="bold"
+
+# Show keybindings in header (yes/no)
+SHOW_HELP="yes"
+
+# ═══════════════════════════════════════════════════════════════════
+# ADVANCED
+# ═══════════════════════════════════════════════════════════════════
+
+# Custom file associations (mime type or extension -> application)
+# Format: "extension:application" (one per line)
+# Example: "mp3:smplayer"
+CUSTOM_ASSOCS=(
+    "aup3:audacity"
+)
+
+# Commands to run on directory change (one per line)
+ON_DIR_CHANGE=""
+
+# External preview command (leave empty for default)
+CUSTOM_PREVIEW=""
