@@ -144,6 +144,3 @@ sudo apt install fzf lsd bat chafa ffmpeg trash-cli
 
 No configuration file required. Edit `fzfm.sh` directly for customization.
 
-## License
-
-MIT License
