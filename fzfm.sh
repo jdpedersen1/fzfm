@@ -4,7 +4,53 @@
 # Created On: Fri 21 Mar 2025 07:12:27 AM CDT
 # Project: Fuzzy File manager
 
-mkdir /tmp/copied
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+    cat << 'EOF'
+Fuzzy File Manager - Keybindings
+=================================
+
+Navigation
+    Enter     Open file/folder
+    Left      Go to parent directory
+    Right     Open file/folder
+    Space     Toggle selection (multi-select)
+
+File Operations
+    alt-c     Copy selected files
+    alt-m     Move selected files
+    alt-p     Paste copied/moved files
+    alt-r     Rename file
+    alt-d     Create directory
+    alt-f     Create file
+    alt-t     Move to trash
+
+View
+    alt-up    Preview up
+    alt-down  Preview down
+    alt-s     Play video in fullscreen
+    alt-b     Set as wallpaper
+
+Other
+    Esc       Clear clipboard & exit
+
+EOF
+    exit 0
+fi
+
+check_deps() {
+    local missing=()
+    for cmd in lsd fzf; do
+        command -v "$cmd" >/dev/null || missing+=("$cmd")
+    done
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        echo "Error: missing required commands: ${missing[*]}" >&2
+        echo "Install with: sudo xbps-install ${missing[*]}" >&2
+        exit 1
+    fi
+}
+
+check_deps
+mkdir -p /tmp/copied
 
 imgview() {
     local file="$1"
@@ -100,7 +146,11 @@ move_files() {
 
 set_background() {
     local file="$1"
-    if [ $XDG_SESSION_TYPE = "x11" ]; then
+    [[ -f "$file" ]] || return
+    local mime
+    mime=$(file --mime-type -b "$file" 2>/dev/null)
+    [[ "$mime" == image/* ]] || return
+    if [ "$XDG_SESSION_TYPE" = "x11" ]; then
         xwallpaper --zoom "$file"
     else
         swww img "$file"
@@ -127,7 +177,6 @@ paste_files() {
         local target="$dest_dir/$orig_name"
 
         if [ ! -e "$target" ]; then
-            # Original name is free, use it
             mv -n "$src" "$target" 2>>/tmp/fzf-error.log
             [ $? -eq 0 ] && echo "Pasted $base_name as $orig_name" >> /tmp/fzf-paste.log || echo "Failed to paste $base_name as $orig_name" >> /tmp/fzf-paste.log
         else
@@ -148,7 +197,6 @@ paste_files() {
         fi
     done
 
-    # Clean up /tmp/copied/
     rm -rf "$copied_dir"/* 2>>/tmp/fzf-error.log
     [ $? -eq 0 ] && echo "Cleaned $copied_dir" >> /tmp/fzf-paste.log
 }
@@ -172,29 +220,43 @@ rem_copied() {
 }
 
 create_dir() {
+    local current_dir
+    local new_dir_name
+    local dir_path
     current_dir=$(pwd)
     new_dir_name=$(echo | fzf --print-query --prompt "Enter Directory Name: " | tail -n 1)
     if [ -n "$new_dir_name" ]; then
-        if [[ "$new_dir_name" == /* ]] || [[ "$new_dir_name" == */* ]]; then
+        if [[ "$new_dir_name" == /* ]]; then
             dir_path="$new_dir_name"
         else
             dir_path="$current_dir/$new_dir_name"
         fi
-        mkdir -p "$dir_path" 2>>/tmp/fzf-error.log
+        local resolved_path
+        resolved_path=$(realpath -m "$dir_path" 2>/dev/null)
+        if [[ "$resolved_path" == "$current_dir"* ]]; then
+            mkdir -p "$resolved_path" 2>>/tmp/fzf-error.log
+        fi
     fi
 }
 
 create_file() {
+    local current_dir
+    local new_file_name
+    local file_path
     current_dir=$(pwd)
     new_file_name=$(echo | fzf --print-query --prompt "Enter File Name: " | tail -n 1)
     if [ -n "$new_file_name" ]; then
-        if [[ "$new_file_name" == /* ]] || [[ "$new_file_name" == */* ]]; then
+        if [[ "$new_file_name" == /* ]]; then
             file_path="$new_file_name"
         else
             file_path="$current_dir/$new_file_name"
         fi
-        mkdir -p "$(dirname "$file_path")" 2>>/tmp/fzf-error.log
-        touch "$file_path" 2>>/tmp/fzf-error.log
+        local resolved_path
+        resolved_path=$(realpath -m "$file_path" 2>/dev/null)
+        if [[ "$resolved_path" == "$current_dir"* ]]; then
+            mkdir -p "$(dirname "$resolved_path")" 2>>/tmp/fzf-error.log
+            touch "$resolved_path" 2>>/tmp/fzf-error.log
+        fi
     fi
 }
 
@@ -244,7 +306,7 @@ fzfm () {
             --preview 'cd_pre="$(echo $(pwd)/$(echo {2}))";
         echo "Folder: " $cd_pre;
         lsd -a --icon=always --color=always "${cd_pre}";
-        kitten icat --clear break 2>/dev/null
+        command -v kitten >/dev/null && kitten icat --clear break 2>/dev/null
         case "$(file --mime-type -b {2})" in
             text/*)
                 fileview {2}
@@ -256,8 +318,12 @@ fzfm () {
                 vidview {2}
                 ;;
         esac' | awk '{print $2}')"
-            if [[ -d ${selection} ]]; then
-                >/dev/null cd "${selection}"
+            if [[ -d "${selection}" ]]; then
+                local target_dir
+                target_dir=$(realpath -m "${selection}" 2>/dev/null)
+                if [[ -d "$target_dir" ]]; then
+                    >/dev/null cd "$target_dir"
+                fi
             elif [[ -f "${selection}" ]]; then
                 file_type=$(file -b --mime-type "${selection}" | cut -d'/' -f1)
                 case $file_type in

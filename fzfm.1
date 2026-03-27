@@ -1,0 +1,76 @@
+.TH FZFM 1 "March 2025" "fzfm" "File Managers"
+.SH NAME
+fzfm \- Fuzzy File Manager
+.SH SYNOPSIS
+.B fzfm
+.SH DESCRIPTION
+fzfm is a terminal-based file manager using fzf for fuzzy finding.
+.SH KEYBINDINGS
+.TP
+.B Enter
+Open file or directory
+.TP
+.B Left
+Go to parent directory
+.TP
+.B Right
+Open file or directory
+.TP
+.B Space
+Toggle selection (multi-select)
+.TP
+.B alt\-c
+Copy selected files to clipboard
+.TP
+.B alt\-m
+Move selected files to clipboard
+.TP
+.B alt\-p
+Paste copied/moved files to current directory
+.TP
+.B alt\-r
+Rename selected file
+.TP
+.B alt\-d
+Create new directory
+.TP
+.B alt\-f
+Create new file
+.TP
+.B alt\-t
+Move selected files to trash
+.TP
+.B alt\-up / alt\-down
+Navigate preview window
+.TP
+.B alt\-s
+Play video in fullscreen (mpv)
+.TP
+.B alt\-b
+Set image as wallpaper
+.TP
+.B F1
+Show help
+.TP
+.B Esc
+Clear clipboard and exit
+.SH CONFIGURATION
+fzfm requires the following commands:
+.BR lsd (1), fzf (1)
+.PP
+Optional for image previews:
+.BR chafa (1), viu (1), kitten (1)
+.PP
+Optional for video previews:
+.BR ffmpeg (1), ffprobe (1)
+.SH FILES
+.TP
+.I /tmp/copied
+Temporary storage for copied/moved files
+.TP
+.I /tmp/fzf_video_cache
+Thumbnail cache for video previews
+.SH SEE ALSO
+.BR fzf (1), lsd (1), bat (1)
+.SH AUTHOR
+Jake@Linux
